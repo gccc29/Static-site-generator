@@ -37,7 +37,7 @@ class TestTextNode(unittest.TestCase):
     def test_code(self):
         node = TextNode("Code here", TextType.CODE)
         html_node = text_node_to_html_node(node)
-        self.assertEqual(html_node.tag, "`")
+        self.assertEqual(html_node.tag, "code")
         self.assertEqual(html_node.value, "Code here")
 
     def test_link(self):
