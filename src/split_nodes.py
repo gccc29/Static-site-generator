@@ -61,7 +61,8 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
                 image_alt = image[0]
                 image_link = image[1]
                 pre, post = sample.split(f"![{image_alt}]({image_link})", 1)
-                output.append(TextNode(pre, TextType.PLAINTEXT))
+                if pre != "":
+                    output.append(TextNode(pre, TextType.PLAINTEXT))
                 output.append(TextNode(image_alt, TextType.IMAGE, image_link))
                 sample = post
             if sample != "":

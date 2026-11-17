@@ -1,7 +1,7 @@
 from blocks import BlockType, block_to_block_type
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from split_blocks import markdown_to_blocks
-from src.split_nodes import text_to_textnodes
+from split_nodes import text_to_textnodes
 from textnode import TextNode, text_node_to_html_node ,TextType
 import re
 
@@ -38,15 +38,15 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
 # Make all the block nodes children under a single parent HTMLNode (just a <div>) and return it
 
 # Helper functions:
-def paragraph_block_to_HTMLnode(block: str) -> HTMLNode:
+def paragraph_block_to_HTMLnode(block: str) -> ParentNode:
     stripped_block = block.replace("\n", " ")
     text_nodes = text_to_textnodes(stripped_block)
-    html_nodes: list[HTMLNode] = []
+    html_nodes = []
     for node in text_nodes:
         html_nodes.append(text_node_to_html_node(node))
     return ParentNode("p", html_nodes)
 
-def heading_to_HTMLnode(block: str) -> HTMLNode:
+def heading_to_HTMLnode(block: str) -> ParentNode:
     clean_line = block.lstrip()
     hash_count = len(clean_line) - len(clean_line.lstrip("#"))
     heading_text = block.strip("# ")
@@ -56,21 +56,22 @@ def heading_to_HTMLnode(block: str) -> HTMLNode:
         html_nodes.append(text_node_to_html_node(node))
     return ParentNode(f"h{hash_count}", html_nodes)
 
-def code_to_HTML_node(block: str) -> HTMLNode:
+def code_to_HTML_node(block: str) -> ParentNode:
     stripped_block = (block.strip("` ")).lstrip("\n")
 
     txt_node = TextNode(stripped_block, TextType.CODE)
     html_node = text_node_to_html_node(txt_node)
     return ParentNode("pre", [html_node])
 
-def quote_to_HTMLnode(block: str) -> HTMLNode:
-    text_nodes = text_to_textnodes(block)
-    html_nodes: list[HTMLNode] = []
+def quote_to_HTMLnode(block: str) -> ParentNode:
+    stripped_block = block.strip("> ")
+    text_nodes = text_to_textnodes(stripped_block)
+    html_nodes = []
     for node in text_nodes:
         html_nodes.append(text_node_to_html_node(node))
     return ParentNode("blockquote", html_nodes)
 
-def unordered_list_to_HTML_node(block: str) -> HTMLNode:
+def unordered_list_to_HTML_node(block: str) -> ParentNode:
     items = block.split("\n")
     output_nodes = []
     for item in items:
@@ -82,7 +83,7 @@ def unordered_list_to_HTML_node(block: str) -> HTMLNode:
         output_nodes.append(ParentNode("li", html_nodes))
     return ParentNode("ul", output_nodes)
 
-def ordered_list_to_HTML_node(block: str) -> HTMLNode:
+def ordered_list_to_HTML_node(block: str) -> ParentNode:
     items = block.split("\n")
     output_nodes = []
     for item in items:
