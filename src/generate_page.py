@@ -3,24 +3,24 @@ from md_to_html_node import markdown_to_html_node
 from htmlnode import HTMLNode
 import os
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     if os.path.isfile(dir_path_content):
         _, ext = os.path.splitext(dir_path_content)
         ext = ext.lower()
         if ext == ".md":
             new_dest = dest_dir_path.replace(".md", ".html")
-            generate_page(dir_path_content, template_path, new_dest)
+            generate_page(dir_path_content, template_path, new_dest, basepath)
     else:
         for item in os.listdir(dir_path_content):
             new_dir_path = os.path.join(dir_path_content, item)
             new_dest_path = os.path.join(dest_dir_path, item)
-            generate_pages_recursive(new_dir_path, template_path, new_dest_path)
+            generate_pages_recursive(new_dir_path, template_path, new_dest_path, basepath)
 
 
 
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
 
     # Print message
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
@@ -54,7 +54,9 @@ def generate_page(from_path, template_path, dest_path):
 
     # Replace the {{ Title }} and {{ Content }} placeholders in the template with the HTML and title you generated
     template_with_title = template.replace("{{ Title }}", title)
-    final_html_str = template_with_title.replace("{{ Content }}", html_str)
+    template_with_content = template_with_title.replace("{{ Content }}", html_str)
+    template_with_href = template_with_content.replace('href="/', f'href="{basepath}')
+    final_html_str = template_with_href.replace('src="/', f'src="{basepath}')
 
     # Write the new full HTML page to a file at 'dest_path'.  Be sure to create any necessary directories if they don't exist
     # Make directories:
